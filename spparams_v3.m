@@ -1,4 +1,4 @@
-function [spparams] = spparams_v2_130321(num_sp, k, k2, k3, k4, maxage, maxage2, maxage3, maxage4)
+function [spparams] = spparams_v3(num_sp, k, k2, k3, k4, maxage, maxage2, maxage3, maxage4)
 
 % Species parameters
 % CJ Brown 9 Dec 2013 - R version
