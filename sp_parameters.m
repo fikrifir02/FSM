@@ -1,5 +1,3 @@
-function [spparams] = spparams_v3(num_sp, k, k2, k3, k4, maxage, maxage2, maxage3, maxage4)
-
 % Species parameters
 % CJ Brown 9 Dec 2013 - R version
 % parameters are modified to fit into three patch model
@@ -15,11 +13,10 @@ bwght = 3; % b-constant for calculating fish biomas - FF
 
 %minimum biomass (as prop of unfished) where profits are zero
 minbio_prof = repelem(0.05, nspp); %minbio.prof changed to minbio_prof, otherwise object will be a struct object
-
 %% Species 1 parrotfish Chlorurus sordidus
-k = k; %k - growth parameter - FF
-linf = 229; %linf - l infinity - FF using linf from the Heron Island, check Choat and Robinson 2002
-maxage = maxage; %maximum age
+k = 1.083; %k - growth parameter - FF
+linf = 193; %linf - l infinity - FF
+maxage = 9; %maximum age
 tzero = 0; %theoretical age when fish at zero cm length - FF
 amat = 1; %age at maturity - FF
 ages = 1:maxage; %fish age range - FF
@@ -37,9 +34,9 @@ matind = zeros(1, maxage); %prepare matrix for fish maturity
 matind(:,ages>=amat) = 1; %recalculate matind - fish older than or equals to amat = 1
 
 %% Species 2 snapper: Lutjanus vittus
-k2 = k2; 
+k2 = 0.37; 
 linf2 = 325;
-maxage2 = maxage2;
+maxage2 = 12;
 tzero2 = -0.23;
 amat2 = 1;
 ages2 = 1:maxage2;
@@ -57,9 +54,9 @@ matind2 = zeros(1, maxage2);
 matind2(:,ages2>=amat2) = 1;
 
 %% Species 3: Coral trout Plectropomus leopardus - see table 1 for parameter
-k3 = k3;
+k3 = 0.45;
 linf3 = 522;
-maxage3 = maxage3;
+maxage3 = 18;
 tzero3 = 0.77;
 amat3 = 3;
 ages3 = 1:maxage3;
@@ -79,9 +76,9 @@ matind3(:,ages3>=amat3) = 1;
 %% Species 4: Rabbit fish siganus argenteus - see table 1 for parameter
 % based on https://www.publish.csiro.au/mf/Fulltext/MF16169 
 
-k4 = k4; %k - growth parameter - FF
-linf4 = 274; %linf - l infinity - FF converted from cm to mm
-maxage4 = maxage4; %maximum age, rounded from 7.8
+k4 = 0.56; %k - growth parameter - FF
+linf4 = 274; %linf - l infinity - FF
+maxage4 = 8; %maximum age, rounded from 7.8
 tzero4 = -0.30; %theoretical age when fish at zero cm length - FF
 amat4 = 1.3; %age at maturity -for females
 ages4 = 1:maxage4; %fish age range - FF
@@ -97,6 +94,7 @@ weights4 = awght4 * ((lengths4./10).^bwght4);
 weightsmat4 = [weights4; weights4; weights4]';
 matind4 = zeros(1, maxage4);
 matind4(:,ages4>=amat4) = 1;
+
 %% Species parameterss
 %compiling all parameters set above in a struct object
 spparams = struct(); 
@@ -129,5 +127,4 @@ for ispp = 1:nspp
 	spparams.Lzero(ispp) = sum(abund .* spparams.matind{1,ispp} .* spparams.weights{1,ispp} .* spparams.fecparam(ispp).*dT);
 	spparams.alpha(ispp) = (spparams.CR(ispp).*spparams.Rmax(ispp))/	spparams.Lzero(ispp);
 	spparams.beta(ispp) = (spparams.CR(ispp)-1)/spparams.Lzero(ispp);
-end
 end
