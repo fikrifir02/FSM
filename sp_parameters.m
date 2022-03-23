@@ -1,8 +1,14 @@
 % Species parameters
 % CJ Brown 9 Dec 2013 - R version
 % parameters are modified to fit into three patch model
-% F Firmansyah August 2020 - Matlab version
+% F Firmansyah August 2022 - Matlab version for the spatial explicit model
 
+%%
+% determine the number of the reefs
+reefs_conn = csvread('wpp_713_snapper_conn.csv');
+no_reefs = numel(reefs_conn (:,1));
+
+%%
 FPmult = 2;  %multiplier for how overfished it is (multiply by optimal effort)
 
 nspp = num_sp; %number of species - FF
@@ -13,6 +19,7 @@ bwght = 3; % b-constant for calculating fish biomas - FF
 
 %minimum biomass (as prop of unfished) where profits are zero
 minbio_prof = repelem(0.05, nspp); %minbio.prof changed to minbio_prof, otherwise object will be a struct object
+
 %% Species 1 parrotfish Chlorurus sordidus
 k = 1.083; %k - growth parameter - FF
 linf = 193; %linf - l infinity - FF
@@ -24,7 +31,7 @@ awght1 = 1.82*(10^-5);
 bwght1 = 3.15;
 
 afish = 2; %age at vulnerable to fishery - FF
-afishind = zeros(maxage, 3); %create nrow (maximum age), 3 columns matrix representing reserve, FMPA, nMPA - FF
+afishind = zeros(maxage, no_reefs); %create nrow (maximum age), columns represent number of patches or individual reefs - FF
 afishind(ages>=amat,:) = 1; %recalculate afishind to determine fish vulnerable age at each zones - FF
 
 lengths = linf *(1 - exp(-k * (ages - tzero))); %calculate length for each ages - FF
@@ -44,7 +51,7 @@ awght2 = 9.99*(10^-6);
 bwght2 = 3.086;
 
 afish2 = 1;
-afishind2 =zeros(maxage2, 3); 
+afishind2 =zeros(maxage2, no_reefs); 
 afishind2(ages2>=amat2,:) = 1;
 
 lengths2 = linf2 *(1 - exp(-k2 * (ages2 - tzero2)));
@@ -64,7 +71,7 @@ awght3 = 7.8*(10^-3); %this param is in cm/kg, so need to divide length by 10
 bwght3 = 3.157;
 
 afish3 = 2;
-afishind3 =zeros(maxage3, 3); 
+afishind3 =zeros(maxage3, no_reefs); 
 afishind3(ages3>=amat3,:) = 1;
 
 lengths3 = linf3 *(1 - exp(-k3 * (ages3 - tzero3)));
@@ -86,7 +93,7 @@ awght4 = 0.01440;
 bwght4 = 3.238;
 
 afish4 = 1; %age at vulnerable to fishery - FF
-afishind4 = zeros(maxage4, 3); %create nrow (maximum age), 3 columns matrix representing reserve, FMPA, nMPA - FF
+afishind4 = zeros(maxage4, no_reefs); %create nrow (maximum age), columns represent number of individual reefs - FF
 afishind4(ages4>=amat4,:) = 1; %recalculate afishind to determine fish vulnerable age at each zones - FF
 
 lengths4 = linf3 *(1 - exp(-k3 * (ages4 - tzero4)));
