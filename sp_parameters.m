@@ -5,9 +5,11 @@
 
 %%
 % determine the number of the reefs
-reefs_conn = csvread('wpp_713_snapper_conn.csv');
+reefs_conn = csvread('wpp_713_snapper_conn_20k.csv');
 no_reefs = numel(reefs_conn (:,1));
-
+reefs_prop = csvread('wpp_713_pu.csv');
+pu_size = 20 * 20; % 20 km x 20km
+reefs_std = reefs_prop(:,3)/sum(reefs_prop(:,3));         %Standardized reef proportion
 %%
 FPmult = 2;  %multiplier for how overfished it is (multiply by optimal effort)
 
@@ -36,7 +38,7 @@ afishind(ages>=amat,:) = 1; %recalculate afishind to determine fish vulnerable a
 
 lengths = linf *(1 - exp(-k * (ages - tzero))); %calculate length for each ages - FF
 weights = awght1 * (lengths.^bwght1); %calculate weight for each ages - FF
-weightsmat = [weights; weights; weights]'; %create an object which has three columns (nMPA, reserve, FMPA) and n rows (age range) -FF
+weightsmat = repmat(weights',1,no_reefs); %create an object which has three columns (nMPA, reserve, FMPA) and n rows (age range) -FF
 matind = zeros(1, maxage); %prepare matrix for fish maturity 
 matind(:,ages>=amat) = 1; %recalculate matind - fish older than or equals to amat = 1
 
@@ -56,7 +58,7 @@ afishind2(ages2>=amat2,:) = 1;
 
 lengths2 = linf2 *(1 - exp(-k2 * (ages2 - tzero2)));
 weights2 = awght2 * (lengths2.^bwght2);
-weightsmat2 = [weights2; weights2; weights2]';  
+weightsmat2 = repmat(weights2',1,no_reefs);  
 matind2 = zeros(1, maxage2);
 matind2(:,ages2>=amat2) = 1;
 
@@ -76,7 +78,7 @@ afishind3(ages3>=amat3,:) = 1;
 
 lengths3 = linf3 *(1 - exp(-k3 * (ages3 - tzero3)));
 weights3 = awght3 * ((lengths3./10).^bwght3);
-weightsmat3 = [weights3; weights3; weights3]';
+weightsmat3 = repmat(weights3',1,no_reefs);
 matind3 = zeros(1, maxage3);
 matind3(:,ages3>=amat3) = 1;
 
@@ -98,7 +100,7 @@ afishind4(ages4>=amat4,:) = 1; %recalculate afishind to determine fish vulnerabl
 
 lengths4 = linf3 *(1 - exp(-k3 * (ages4 - tzero4)));
 weights4 = awght4 * ((lengths4./10).^bwght4);
-weightsmat4 = [weights4; weights4; weights4]';
+weightsmat4 = repmat(weights4',1,no_reefs);
 matind4 = zeros(1, maxage4);
 matind4(:,ages4>=amat4) = 1;
 
@@ -116,7 +118,7 @@ spparams.weightsmat = struct ();
 spparams.weightsmat = {weightsmat, weightsmat2, weightsmat3, weightsmat4};
 spparams.fecparam = [1, 1, 1, 1];
 spparams.CR = [4, 4, 4, 4]; %what is CR? - FF
-spparams.Rmax = [4, 1, 0.25, 16]; %maximum recruitment, used 4times magnitude, from low to high, siganus was the highest
+spparams.Rmax = [4,1,0.25,16]; %maximum recruitment, used 4times magnitude, from low to high, siganus was the highest
 spparams.afishind = struct ();
 spparams.afishind = {afishind, afishind2, afishind3, afishind4};
 spparams.RelVal = [1,2,4,1]; %wRelative value, value of rabbit fish and parrot fish are the same
